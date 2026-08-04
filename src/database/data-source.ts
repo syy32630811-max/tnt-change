@@ -1,0 +1,51 @@
+/*
+ * @Author: aliyun9402055519
+ * @Date: 2026-07-16 17:13:08
+ * @LastEditors: aliyun9402055519
+ * @LastEditTime: 2026-08-04 14:14:41
+ * @FilePath: /change/src/database/data-source.ts
+ * @Description: 默认
+ */
+import { DataSource, type DataSourceOptions } from 'typeorm';
+import { ExchangeMaterial, PageEntryCode } from '../entities';
+import { InitTables1754290800000 } from './migrations/1754290800000-InitTables';
+
+export function getDatabaseConfig(): DatabaseConnectionConfig {
+  return {
+    host: process.env.DB_HOST ?? 'localhost',
+    port: parseInt(process.env.DB_PORT ?? '3306', 10),
+    username: process.env.DB_USERNAME ?? 'root',
+    password: process.env.DB_PASSWORD ?? '123456',
+    database: process.env.DB_NAME ?? 'tnt_shop',
+  };
+}
+
+export interface DatabaseConnectionConfig {
+  host: string;
+  port: number;
+  username: string;
+  password: string;
+  database: string;
+}
+
+export function getDataSourceOptions(
+  config: DatabaseConnectionConfig = getDatabaseConfig(),
+): DataSourceOptions {
+  return {
+    type: 'mysql',
+    host: config.host,
+    port: config.port,
+    username: config.username,
+    password: config.password,
+    database: config.database,
+    entities: [PageEntryCode, ExchangeMaterial],
+    migrations: [InitTables1754290800000],
+    synchronize: false,
+  };
+}
+
+export function createDataSource(
+  config: DatabaseConnectionConfig = getDatabaseConfig(),
+): DataSource {
+  return new DataSource(getDataSourceOptions(config));
+}
