@@ -10,7 +10,14 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from '../config/database.config';
-import { ExchangeMaterial, PageEntryCode } from '../entities';
+import {
+  ExchangeMaterial,
+  Order,
+  OrderItem,
+  PageEntryCode,
+  Product,
+  ProductSpec,
+} from '../entities';
 
 @Module({
   imports: [
@@ -25,7 +32,14 @@ import { ExchangeMaterial, PageEntryCode } from '../entities';
         username: configService.get<string>('database.username'),
         password: configService.get<string>('database.password'),
         database: configService.get<string>('database.database'),
-        entities: [PageEntryCode, ExchangeMaterial],
+        entities: [
+          PageEntryCode,
+          ExchangeMaterial,
+          Product,
+          ProductSpec,
+          Order,
+          OrderItem,
+        ],
         synchronize: false,
       }),
     }),

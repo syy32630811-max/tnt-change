@@ -1,16 +1,18 @@
 /*
- * @Description: 互换物料
+ * @Description: 商品
  */
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ProductSpec } from './product-spec.entity';
 
-@Entity('exchange_materials')
-export class ExchangeMaterial {
+@Entity('products')
+export class Product {
   @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
   id: string;
 
@@ -18,21 +20,19 @@ export class ExchangeMaterial {
   @Column({ type: 'varchar', length: 128 })
   name: string;
 
-  /** 总量 */
-  @Column({ type: 'int', unsigned: true, default: 0 })
-  quantity: number;
-
-  /** 图片 */
-  @Column({ type: 'varchar', length: 512, default: '' })
-  image: string;
+  /** 封面图片 */
+  @Column({ name: 'cover_image', type: 'varchar', length: 512, default: '' })
+  coverImage: string;
 
   /** 是否有效 */
   @Column({ name: 'is_valid', type: 'boolean', default: true })
   isValid: boolean;
 
-  /** 到期时间 */
-  @Column({ name: 'expire_at', type: 'datetime', nullable: true })
-  expireAt: Date | null;
+  @OneToMany(() => ProductSpec, (spec) => spec.product, {
+    cascade: true,
+    eager: true,
+  })
+  specs: ProductSpec[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

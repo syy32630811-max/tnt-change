@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHANGE · 页面入口</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Syne:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/page/assets/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <div class="brand">Chan<span>ge</span></div>
+      <main class="hero">
+        <h1>输入页面标识码</h1>
+        <!-- <p>根据页面码识别入口类型，跳转管理、物料互换或物料定制页面。</p> -->
+        <form class="entry" id="entry-form">
+          <label for="page-code">标识码</label>
+          <input
+            id="page-code"
+            name="code"
+            type="text"
+            maxlength="128"
+            autocomplete="off"
+            placeholder="请输入页面码"
+            required
+          />
+          <button type="submit" id="jump-btn">跳转</button>
+          <p class="message" id="message" role="alert"></p>
+        </form>
+      </main>
+    </div>
+
+    <script>
+      const PAGE_ROUTES = {
+        admin: "/page/admin/",
+        exchange: "/page/exchange/",
+        custom: "/page/custom/",
+      };
+
+      const form = document.getElementById("entry-form");
+      const input = document.getElementById("page-code");
+      const button = document.getElementById("jump-btn");
+      const message = document.getElementById("message");
+
+      function showMessage(text, ok = false) {
+        message.textContent = text;
+        message.classList.toggle("ok", ok);
+        message.classList.add("show");
+      }
+
+      function clearMessage() {
+        message.textContent = "";
+        message.classList.remove("show", "ok");
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        clearMessage();
+
+        const code = input.value.trim();
+        if (!code) {
+          showMessage("请输入页面码");
+          input.focus();
+          return;
+        }
+
+        button.disabled = true;
+        button.textContent = "查询中…";
+
+        try {
+          const response = await fetch(
+            `/api/page-entry-codes/${encodeURIComponent(code)}`,
+          );
+          const data = await response.json().catch(() => ({}));
+
+          if (!response.ok) {
+            const raw = data.message;
+            const text = Array.isArray(raw)
+              ? raw[0]
+              : raw || "页面码无效，请重试";
+            throw new Error(text);
+          }
+
+          const route = PAGE_ROUTES[data.pageType];
+          if (!route) {
+            throw new Error("暂不支持该页面类型");
+          }
+
+          showMessage(`正在进入${data.pageTypeLabel || "目标页面"}…`, true);
+          window.location.href = `${route}?code=${encodeURIComponent(data.code)}`;
+        } catch (error) {
+          showMessage(error instanceof Error ? error.message : "请求失败");
+          button.disabled = false;
+          button.textContent = "跳转";
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -7,8 +7,17 @@
  * @Description: 默认
  */
 import { DataSource, type DataSourceOptions } from 'typeorm';
-import { ExchangeMaterial, PageEntryCode } from '../entities';
+import {
+  ExchangeMaterial,
+  Order,
+  OrderItem,
+  PageEntryCode,
+  Product,
+  ProductSpec,
+} from '../entities';
 import { InitTables1754290800000 } from './migrations/1754290800000-InitTables';
+import { AdminTables1754294400000 } from './migrations/1754294400000-AdminTables';
+import { AddProductSpecName1754295000000 } from './migrations/1754295000000-AddProductSpecName';
 
 export function getDatabaseConfig(): DatabaseConnectionConfig {
   return {
@@ -38,8 +47,19 @@ export function getDataSourceOptions(
     username: config.username,
     password: config.password,
     database: config.database,
-    entities: [PageEntryCode, ExchangeMaterial],
-    migrations: [InitTables1754290800000],
+    entities: [
+      PageEntryCode,
+      ExchangeMaterial,
+      Product,
+      ProductSpec,
+      Order,
+      OrderItem,
+    ],
+    migrations: [
+      InitTables1754290800000,
+      AdminTables1754294400000,
+      AddProductSpecName1754295000000,
+    ],
     synchronize: false,
   };
 }

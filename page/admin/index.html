@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHANGE · 管理后台</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Syne:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/page/assets/admin.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-layout">
+      <aside class="admin-side">
+        <div class="admin-brand">Chan<span>ge</span></div>
+        <nav class="admin-nav">
+          <button type="button" data-nav="materials" class="active">物料管理</button>
+          <button type="button" data-nav="products">商品管理</button>
+          <button type="button" data-nav="orders">订单管理</button>
+          <button type="button" data-nav="page-codes">页面码管理</button>
+        </nav>
+        <a class="back-link" href="/page/">← 返回入口</a>
+      </aside>
+
+      <main class="admin-main">
+        <section class="view active" data-view="materials">
+          <div class="admin-header">
+            <h1>物料管理</h1>
+            <button type="button" class="btn btn-primary" id="add-material-btn">新增物料</button>
+          </div>
+          <div class="panel table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>图片</th>
+                  <th>名称</th>
+                  <th>总量</th>
+                  <th>到期时间</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="materials-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="view" data-view="products">
+          <div class="admin-header">
+            <h1>商品管理</h1>
+            <button type="button" class="btn btn-primary" id="add-product-btn">新增商品</button>
+          </div>
+          <div class="panel table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>封面</th>
+                  <th>名称</th>
+                  <th>规格</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="products-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="view" data-view="orders">
+          <div class="admin-header">
+            <h1>订单管理</h1>
+          </div>
+          <div class="panel table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>订单号</th>
+                  <th>状态</th>
+                  <th>快递单号</th>
+                  <th>联系人</th>
+                  <th>创建时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="orders-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="view" data-view="page-codes">
+          <div class="admin-header">
+            <h1>页面码管理</h1>
+            <button type="button" class="btn btn-primary" id="add-page-code-btn">新增页面码</button>
+          </div>
+          <div class="panel table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>页面码</th>
+                  <th>类型</th>
+                  <th>状态</th>
+                  <th>创建时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="page-codes-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-mask" id="modal-mask">
+      <div class="modal" id="modal"></div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script src="/page/assets/admin.js"></script>
+  </body>
+</html>

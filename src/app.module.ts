@@ -11,6 +11,11 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import databaseConfig from './config/database.config';
 import { DatabaseModule } from './database/database.module';
+import { MaterialModule } from './material/material.module';
+import { OrderModule } from './order/order.module';
+import { PageEntryCodeModule } from './page-entry-code/page-entry-code.module';
+import { ProductModule } from './product/product.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -20,6 +25,11 @@ import { DatabaseModule } from './database/database.module';
     }),
     DatabaseModule,
     AuthModule,
+    UploadModule,
+    PageEntryCodeModule,
+    MaterialModule,
+    ProductModule,
+    OrderModule,
   ],
 })
 export class AppModule {}

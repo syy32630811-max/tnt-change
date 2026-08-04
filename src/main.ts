@@ -21,6 +21,7 @@ async function bootstrap() {
   app.useBodyParser('json', { limit: '30mb' });
   app.useBodyParser('urlencoded', { limit: '30mb', extended: true });
   app.useStaticAssets(join(process.cwd(), 'page'), { prefix: '/page' });
+  app.useStaticAssets(join(process.cwd(), 'uploads'), { prefix: '/uploads' });
   app.setGlobalPrefix('api');
   app.enableCors();
   app.useGlobalPipes(
