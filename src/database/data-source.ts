@@ -9,6 +9,7 @@
 import { DataSource, type DataSourceOptions } from 'typeorm';
 import {
   ExchangeMaterial,
+  MaterialExchangeRecord,
   Order,
   OrderItem,
   PageEntryCode,
@@ -18,6 +19,9 @@ import {
 import { InitTables1754290800000 } from './migrations/1754290800000-InitTables';
 import { AdminTables1754294400000 } from './migrations/1754294400000-AdminTables';
 import { AddProductSpecName1754295000000 } from './migrations/1754295000000-AddProductSpecName';
+import { MaterialExchangeRecords1754300000000 } from './migrations/1754300000000-MaterialExchangeRecords';
+import { AddPageCodeToExchangeRecords1754301000000 } from './migrations/1754301000000-AddPageCodeToExchangeRecords';
+import { AddExchangeRecordValidAndQr1754302000000 } from './migrations/1754302000000-AddExchangeRecordValidAndQr';
 
 export function getDatabaseConfig(): DatabaseConnectionConfig {
   return {
@@ -50,6 +54,7 @@ export function getDataSourceOptions(
     entities: [
       PageEntryCode,
       ExchangeMaterial,
+      MaterialExchangeRecord,
       Product,
       ProductSpec,
       Order,
@@ -59,6 +64,9 @@ export function getDataSourceOptions(
       InitTables1754290800000,
       AdminTables1754294400000,
       AddProductSpecName1754295000000,
+      MaterialExchangeRecords1754300000000,
+      AddPageCodeToExchangeRecords1754301000000,
+      AddExchangeRecordValidAndQr1754302000000,
     ],
     synchronize: false,
   };

@@ -20,6 +20,7 @@ const ORDER_STATUSES = [
 const state = {
   view: "materials",
   materials: [],
+  materialRecords: [],
   products: [],
   orders: [],
   pageCodes: [],
@@ -113,6 +114,9 @@ async function loadCurrentView() {
     if (state.view === "materials") {
       state.materials = await api("/materials");
       renderMaterials();
+    } else if (state.view === "material-records") {
+      state.materialRecords = await api("/material-exchange-records");
+      renderMaterialRecords();
     } else if (state.view === "products") {
       state.products = await api("/products");
       renderProducts();
@@ -147,6 +151,29 @@ function renderMaterials() {
         <td>
           <button class="icon-btn" title="编辑" data-edit-material="${item.id}">${ICONS.edit}</button>
         </td>
+      </tr>`,
+    )
+    .join("");
+}
+
+function renderMaterialRecords() {
+  const body = document.getElementById("material-records-body");
+  if (!state.materialRecords.length) {
+    body.innerHTML = `<tr><td colspan="7"><div class="empty">暂无有效期内物料的互换记录</div></td></tr>`;
+    return;
+  }
+
+  body.innerHTML = state.materialRecords
+    .map(
+      (item) => `
+      <tr>
+        <td><code>${escapeHtml(item.pageCode || "-")}</code></td>
+        <td>${escapeHtml(item.materialName)}</td>
+        <td>${escapeHtml(item.platform)}</td>
+        <td>${escapeHtml(item.platformUserId)}</td>
+        <td>${escapeHtml(item.redeemCode || "-")}</td>
+        <td>${formatDate(item.materialExpireAt)}</td>
+        <td>${formatDate(item.createdAt)}</td>
       </tr>`,
     )
     .join("");
@@ -187,7 +214,14 @@ function renderOrders() {
       (item) => `
       <tr>
         <td>${escapeHtml(item.orderNo)}</td>
-        <td>${escapeHtml(item.statusLabel || item.status)}</td>
+        <td>
+          <select class="status-select" data-order-status="${item.id}">
+            ${ORDER_STATUSES.map(
+              (status) =>
+                `<option value="${status.value}" ${status.value === item.status ? "selected" : ""}>${status.label}</option>`,
+            ).join("")}
+          </select>
+        </td>
         <td>${escapeHtml(item.trackingNo || "-")}</td>
         <td>${escapeHtml(item.contactName || "-")}</td>
         <td>${formatDate(item.createdAt)}</td>
@@ -198,6 +232,15 @@ function renderOrders() {
       </tr>`,
     )
     .join("");
+}
+
+async function updateOrderStatus(orderId, status) {
+  await api(`/orders/${orderId}/status`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
+  toast("订单状态已更新");
+  await loadCurrentView();
 }
 
 function renderPageCodes() {
@@ -638,6 +681,22 @@ async function openOrderTracking(id) {
   }
 }
 
+document.addEventListener("change", async (event) => {
+  const statusSelect = event.target.closest("[data-order-status]");
+  if (!statusSelect) return;
+
+  const orderId = statusSelect.dataset.orderStatus;
+  const status = statusSelect.value;
+  const previous = state.orders.find((item) => item.id === orderId)?.status;
+
+  try {
+    await updateOrderStatus(orderId, status);
+  } catch (error) {
+    if (previous) statusSelect.value = previous;
+    toast(error.message, true);
+  }
+});
+
 document.addEventListener("click", async (event) => {
   const nav = event.target.closest("[data-nav]");
   if (nav) {
@@ -691,13 +750,8 @@ document.addEventListener("click", async (event) => {
   if (saveStatus) {
     const status = document.getElementById("order-status")?.value;
     try {
-      await api(`/orders/${saveStatus.dataset.saveOrderStatus}/status`, {
-        method: "PATCH",
-        body: JSON.stringify({ status }),
-      });
-      toast("订单状态已更新");
+      await updateOrderStatus(saveStatus.dataset.saveOrderStatus, status);
       closeModal();
-      await loadCurrentView();
     } catch (error) {
       toast(error.message, true);
     }

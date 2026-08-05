@@ -267,6 +267,22 @@ table.data-table tr:last-child td {
   border-color: rgba(217, 106, 91, 0.4);
 }
 
+.status-select {
+  min-width: 120px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--fog);
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 8px 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+.status-select:focus {
+  border-color: rgba(224, 148, 79, 0.65);
+}
+
 .modal-mask {
   position: fixed;
   inset: 0;

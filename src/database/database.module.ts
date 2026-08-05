@@ -12,6 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from '../config/database.config';
 import {
   ExchangeMaterial,
+  MaterialExchangeRecord,
   Order,
   OrderItem,
   PageEntryCode,
@@ -35,6 +36,7 @@ import {
         entities: [
           PageEntryCode,
           ExchangeMaterial,
+          MaterialExchangeRecord,
           Product,
           ProductSpec,
           Order,

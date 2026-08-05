@@ -11,16 +11,33 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/page/assets/styles.css" />
+    <link rel="stylesheet" href="/page/assets/exchange.css" />
   </head>
   <body>
-    <div class="shell">
+    <div class="shell exchange-shell">
       <div class="brand">Chan<span>ge</span></div>
-      <main class="page-panel">
-        <p class="eyebrow">Exchange</p>
-        <h1>物料互换</h1>
-        <p>物料互换工作台入口已就绪，后续可在此展示可互换物料列表。</p>
+      <main class="exchange-main">
+        <header class="exchange-header">
+          <p class="eyebrow">Exchange</p>
+          <div class="exchange-title-row">
+            <h1>物料互换</h1>
+            <button type="button" class="record-btn" id="my-record-btn" hidden>
+              我的记录
+            </button>
+          </div>
+        </header>
+        <div class="material-list" id="material-list">
+          <div class="empty-tip">加载中…</div>
+        </div>
         <a class="back" href="/page/">← 返回入口</a>
       </main>
     </div>
+
+    <div class="modal-mask" id="modal-mask">
+      <div class="modal" id="modal"></div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script src="/page/assets/exchange.js"></script>
   </body>
 </html>

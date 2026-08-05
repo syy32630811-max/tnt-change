@@ -18,6 +18,7 @@
         <div class="admin-brand">Chan<span>ge</span></div>
         <nav class="admin-nav">
           <button type="button" data-nav="materials" class="active">物料管理</button>
+          <button type="button" data-nav="material-records">物料记录管理</button>
           <button type="button" data-nav="products">商品管理</button>
           <button type="button" data-nav="orders">订单管理</button>
           <button type="button" data-nav="page-codes">页面码管理</button>
@@ -44,6 +45,28 @@
                 </tr>
               </thead>
               <tbody id="materials-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="view" data-view="material-records">
+          <div class="admin-header">
+            <h1>物料记录管理</h1>
+          </div>
+          <div class="panel table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>页面码</th>
+                  <th>物料名称</th>
+                  <th>平台</th>
+                  <th>平台 ID</th>
+                  <th>兑换码</th>
+                  <th>物料到期时间</th>
+                  <th>提交时间</th>
+                </tr>
+              </thead>
+              <tbody id="material-records-body"></tbody>
             </table>
           </div>
         </section>
