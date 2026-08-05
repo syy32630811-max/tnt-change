@@ -17,6 +17,11 @@ const ORDER_STATUSES = [
   { value: "cancelled", label: "已取消" },
 ];
 
+const pageCode =
+  new URLSearchParams(window.location.search).get("code")?.trim() || "";
+const EXPECTED_PAGE_TYPE = "admin";
+const ENTRY_URL = "/page/";
+
 const state = {
   view: "materials",
   materials: [],
@@ -64,6 +69,33 @@ async function api(path, options = {}) {
   return data;
 }
 
+function redirectToEntry(message) {
+  const params = new URLSearchParams();
+  if (message) params.set("error", message);
+  window.location.replace(`${ENTRY_URL}?${params.toString()}`);
+}
+
+async function ensurePageCode() {
+  if (!pageCode) {
+    redirectToEntry("缺少页面码，请输入标识码进入");
+    return false;
+  }
+
+  try {
+    const data = await api(`/page-entry-codes/${encodeURIComponent(pageCode)}`);
+    if (data.pageType !== EXPECTED_PAGE_TYPE) {
+      redirectToEntry(
+        `该页面码属于${data.pageTypeLabel || "其他类型"}，无法进入管理页`,
+      );
+      return false;
+    }
+    return true;
+  } catch (error) {
+    redirectToEntry(error.message || "页面码无效或不存在");
+    return false;
+  }
+}
+
 async function uploadFile(file) {
   const form = new FormData();
   form.append("file", file);
@@ -74,16 +106,34 @@ function formatDate(value) {
   if (!value) return "-";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "-";
-  const pad = (n) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const get = (type) => parts.find((part) => part.type === type)?.value ?? "";
+  return `${get("year")}-${get("month")}-${get("day")} ${get("hour")}:${get("minute")}`;
 }
 
 function toDatetimeLocal(value) {
   if (!value) return "";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
-  const pad = (n) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const get = (type) => parts.find((part) => part.type === type)?.value ?? "";
+  return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}`;
 }
 
 function closeModal() {
@@ -464,7 +514,7 @@ async function openMaterialModal(id) {
       name: form.name.value.trim(),
       image: form.image.value,
       quantity: Number(form.quantity.value),
-      expireAt: new Date(form.expireAt.value).toISOString(),
+      expireAt: new Date(`${form.expireAt.value}:00+08:00`).toISOString(),
     };
 
     if (!payload.image) {
@@ -774,4 +824,8 @@ document.addEventListener("click", async (event) => {
   }
 });
 
-switchView("materials");
+(async function init() {
+  const ok = await ensurePageCode();
+  if (!ok) return;
+  switchView("materials");
+})();

@@ -11,16 +11,56 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/page/assets/styles.css" />
+    <link rel="stylesheet" href="/page/assets/custom.css" />
   </head>
   <body>
-    <div class="shell">
+    <div class="shell custom-shell">
       <div class="brand">Chan<span>ge</span></div>
-      <main class="page-panel">
-        <p class="eyebrow">Custom</p>
-        <h1>物料定制</h1>
-        <p>物料定制工作台入口已就绪，后续可在此配置定制流程。</p>
+      <main class="custom-main">
+        <header class="custom-header">
+          <p class="eyebrow">Custom</p>
+          <h1>物料定制</h1>
+        </header>
+
+        <nav class="custom-tabs" id="custom-tabs">
+          <button type="button" class="tab-btn active" data-tab="products">商品列表</button>
+          <button type="button" class="tab-btn" data-tab="cart">
+            购物车<span class="cart-badge" id="cart-badge" hidden>0</span>
+          </button>
+          <button type="button" class="tab-btn" data-tab="orders">我的订单</button>
+        </nav>
+
+        <section class="tab-panel active" data-panel="products">
+          <div id="product-list" class="product-list">
+            <div class="empty-tip">加载中…</div>
+          </div>
+        </section>
+
+        <section class="tab-panel" data-panel="cart">
+          <div id="cart-list" class="cart-list">
+            <div class="empty-tip">购物车为空</div>
+          </div>
+          <div class="cart-footer" id="cart-footer">
+            <div class="cart-total">合计：¥<span id="cart-total">0.00</span></div>
+            <button type="button" class="btn btn-primary" id="checkout-btn">提交订单</button>
+          </div>
+        </section>
+
+        <section class="tab-panel" data-panel="orders">
+          <div id="order-list" class="order-list">
+            <div class="empty-tip">加载中…</div>
+          </div>
+        </section>
+
         <a class="back" href="/page/">← 返回入口</a>
       </main>
     </div>
+
+    <div class="modal-mask" id="modal-mask">
+      <div class="modal" id="modal"></div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script src="/page/assets/custom.js"></script>
   </body>
 </html>

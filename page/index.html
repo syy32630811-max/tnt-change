@@ -58,6 +58,14 @@
         message.classList.remove("show", "ok");
       }
 
+      const entryError = new URLSearchParams(window.location.search)
+        .get("error")
+        ?.trim();
+      if (entryError) {
+        showMessage(entryError);
+        history.replaceState({}, "", "/page/");
+      }
+
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
         clearMessage();

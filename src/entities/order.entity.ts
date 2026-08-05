@@ -20,6 +20,10 @@ export class Order {
   @Column({ name: 'order_no', type: 'varchar', length: 64, unique: true })
   orderNo: string;
 
+  /** 页面码 */
+  @Column({ name: 'page_code', type: 'varchar', length: 128, default: '' })
+  pageCode: string;
+
   /** 订单状态 */
   @Column({ type: 'varchar', length: 32, default: 'submitted' })
   status: string;

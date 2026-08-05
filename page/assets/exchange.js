@@ -6,6 +6,9 @@ const myRecordBtn = document.getElementById("my-record-btn");
 
 const pageCode = new URLSearchParams(window.location.search).get("code")?.trim() || "";
 
+const EXPECTED_PAGE_TYPE = "exchange";
+const ENTRY_URL = "/page/";
+
 let materials = [];
 let myRecord = null;
 let selectedMaterial = null;
@@ -48,6 +51,33 @@ async function api(path, options = {}) {
     throw new Error(Array.isArray(raw) ? raw[0] : raw || "请求失败");
   }
   return data;
+}
+
+function redirectToEntry(message) {
+  const params = new URLSearchParams();
+  if (message) params.set("error", message);
+  window.location.replace(`${ENTRY_URL}?${params.toString()}`);
+}
+
+async function ensurePageCode() {
+  if (!pageCode) {
+    redirectToEntry("缺少页面码，请输入标识码进入");
+    return false;
+  }
+
+  try {
+    const data = await api(`/page-entry-codes/${encodeURIComponent(pageCode)}`);
+    if (data.pageType !== EXPECTED_PAGE_TYPE) {
+      redirectToEntry(
+        `该页面码属于${data.pageTypeLabel || "其他类型"}，无法进入物料互换页`,
+      );
+      return false;
+    }
+    return true;
+  } catch (error) {
+    redirectToEntry(error.message || "页面码无效或不存在");
+    return false;
+  }
 }
 
 function closeModal() {
@@ -174,15 +204,15 @@ function openMyRecordModal() {
 
   modal.innerHTML = `
     <h2>我的记录</h2>
-    <p class="sub">修改领取信息，并可查看兑换二维码。</p>
+    <p class="sub">查看兑换二维码</p>
     <div class="qr-panel">
       ${
         myRecord.qrCodeUrl
           ? `<img class="qr-image" src="${escapeHtml(myRecord.qrCodeUrl)}" alt="兑换二维码" />`
           : `<div class="empty-tip">暂无二维码</div>`
       }
-      <p class="qr-code-text">兑换码：${escapeHtml(myRecord.redeemCode || "-")}</p>
     </div>
+    <p class="sub">可在下方修改领取信息</p>
     <form class="form-grid" id="record-form">
       <div class="form-row">
         <label>当前物料</label>
@@ -354,6 +384,9 @@ document.addEventListener("click", async (event) => {
 });
 
 (async function init() {
+  const ok = await ensurePageCode();
+  if (!ok) return;
+
   try {
     await refresh();
   } catch (error) {

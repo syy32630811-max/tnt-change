@@ -27,6 +27,10 @@ export class OrderItem {
   @Column({ name: 'product_name', type: 'varchar', length: 128 })
   productName: string;
 
+  /** 规格名称 */
+  @Column({ name: 'spec_name', type: 'varchar', length: 128, default: '' })
+  specName: string;
+
   /** 规格图片 */
   @Column({ type: 'varchar', length: 512, default: '' })
   image: string;

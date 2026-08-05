@@ -22,6 +22,7 @@ import { AddProductSpecName1754295000000 } from './migrations/1754295000000-AddP
 import { MaterialExchangeRecords1754300000000 } from './migrations/1754300000000-MaterialExchangeRecords';
 import { AddPageCodeToExchangeRecords1754301000000 } from './migrations/1754301000000-AddPageCodeToExchangeRecords';
 import { AddExchangeRecordValidAndQr1754302000000 } from './migrations/1754302000000-AddExchangeRecordValidAndQr';
+import { AddOrderPageCodeAndSpecName1754380000000 } from './migrations/1754380000000-AddOrderPageCodeAndSpecName';
 
 export function getDatabaseConfig(): DatabaseConnectionConfig {
   return {
@@ -67,6 +68,7 @@ export function getDataSourceOptions(
       MaterialExchangeRecords1754300000000,
       AddPageCodeToExchangeRecords1754301000000,
       AddExchangeRecordValidAndQr1754302000000,
+      AddOrderPageCodeAndSpecName1754380000000,
     ],
     synchronize: false,
   };
