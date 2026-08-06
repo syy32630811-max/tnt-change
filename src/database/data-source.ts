@@ -23,6 +23,7 @@ import { MaterialExchangeRecords1754300000000 } from './migrations/1754300000000
 import { AddPageCodeToExchangeRecords1754301000000 } from './migrations/1754301000000-AddPageCodeToExchangeRecords';
 import { AddExchangeRecordValidAndQr1754302000000 } from './migrations/1754302000000-AddExchangeRecordValidAndQr';
 import { AddOrderPageCodeAndSpecName1754380000000 } from './migrations/1754380000000-AddOrderPageCodeAndSpecName';
+import { AddPageEntryCodeScreenshot1754400000000 } from './migrations/1754400000000-AddPageEntryCodeScreenshot';
 
 export function getDatabaseConfig(): DatabaseConnectionConfig {
   return {
@@ -69,6 +70,7 @@ export function getDataSourceOptions(
       AddPageCodeToExchangeRecords1754301000000,
       AddExchangeRecordValidAndQr1754302000000,
       AddOrderPageCodeAndSpecName1754380000000,
+      AddPageEntryCodeScreenshot1754400000000,
     ],
     synchronize: false,
   };

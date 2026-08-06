@@ -17,7 +17,6 @@
       <div class="brand">Chan<span>ge</span></div>
       <main class="hero">
         <h1>输入页面标识码</h1>
-        <!-- <p>根据页面码识别入口类型，跳转管理、物料互换或物料定制页面。</p> -->
         <form class="entry" id="entry-form">
           <label for="page-code">标识码</label>
           <input
@@ -30,9 +29,109 @@
             required
           />
           <button type="submit" id="jump-btn">跳转</button>
+          <button type="button" class="btn-secondary" id="open-generate-btn">
+            生成标识码
+          </button>
           <p class="message" id="message" role="alert"></p>
         </form>
       </main>
+    </div>
+
+    <div class="modal-mask" id="generate-mask">
+      <div class="modal" id="generate-modal">
+        <h2>生成标识码</h2>
+        <div class="gen-tabs" id="gen-tabs">
+          <button type="button" class="gen-tab active" data-gen-type="exchange">
+            互换
+          </button>
+          <button type="button" class="gen-tab" data-gen-type="custom">定制</button>
+        </div>
+
+        <p class="gen-error" id="gen-error" hidden></p>
+
+        <!-- 互换 -->
+        <div class="gen-panel active" data-gen-panel="exchange">
+          <form class="gen-form" id="gen-exchange-form">
+            <div class="form-row">
+              <label>选择平台</label>
+              <div class="platform-options">
+                <label class="platform-option">
+                  <input type="radio" name="platform" value="xhs" required checked />
+                  <span>🍠 (xhs)</span>
+                </label>
+                <label class="platform-option">
+                  <input type="radio" name="platform" value="dy" required />
+                  <span>🫘 (dy)</span>
+                </label>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="exchange-id">平台 ID</label>
+              <input
+                id="exchange-id"
+                name="platformId"
+                type="text"
+                maxlength="100"
+                required
+                placeholder="请输入 ID"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-row">
+              <label for="exchange-shot">上传个人中心 ID 截图</label>
+              <input
+                id="exchange-shot"
+                name="screenshot"
+                type="file"
+                accept="image/*"
+                required
+              />
+              <p class="hint" id="shot-hint" hidden></p>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn-ghost" data-close-generate>取消</button>
+              <button type="submit" class="btn-primary" id="gen-exchange-btn">生成</button>
+            </div>
+          </form>
+          <div class="gen-result" id="exchange-result" hidden>
+            <p class="hint">标识码</p>
+            <div class="gen-code-row">
+              <p class="gen-code" id="exchange-code"></p>
+              <button type="button" class="btn-primary" id="copy-exchange-btn">复制</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 定制 -->
+        <div class="gen-panel" data-gen-panel="custom">
+          <form class="gen-form" id="gen-custom-form">
+            <div class="form-row">
+              <label for="custom-name">用户名</label>
+              <input
+                id="custom-name"
+                name="username"
+                type="text"
+                maxlength="128"
+                required
+                placeholder="请输入用户名"
+                autocomplete="off"
+              />
+              <p class="hint">用户名作为标识码进入页面</p>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn-ghost" data-close-generate>取消</button>
+              <button type="submit" class="btn-primary" id="gen-custom-btn">生成</button>
+            </div>
+          </form>
+          <div class="gen-result" id="custom-result" hidden>
+            <p class="hint">标识码</p>
+            <div class="gen-code-row">
+              <p class="gen-code" id="custom-code"></p>
+              <button type="button" class="btn-primary" id="copy-custom-btn">复制</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
@@ -46,6 +145,20 @@
       const input = document.getElementById("page-code");
       const button = document.getElementById("jump-btn");
       const message = document.getElementById("message");
+      const generateMask = document.getElementById("generate-mask");
+      const genError = document.getElementById("gen-error");
+      const exchangeForm = document.getElementById("gen-exchange-form");
+      const customForm = document.getElementById("gen-custom-form");
+      const exchangeResult = document.getElementById("exchange-result");
+      const customResult = document.getElementById("custom-result");
+      const exchangeCodeEl = document.getElementById("exchange-code");
+      const customCodeEl = document.getElementById("custom-code");
+      const shotHint = document.getElementById("shot-hint");
+
+      let activeGenType = "exchange";
+      let uploadedShotUrl = "";
+      let exchangeGeneratedCode = "";
+      let customGeneratedCode = "";
 
       function showMessage(text, ok = false) {
         message.textContent = text;
@@ -58,6 +171,69 @@
         message.classList.remove("show", "ok");
       }
 
+      function showGenError(text) {
+        if (!text) {
+          genError.hidden = true;
+          genError.textContent = "";
+          return;
+        }
+        genError.hidden = false;
+        genError.textContent = text;
+      }
+
+      function openGenerate() {
+        uploadedShotUrl = "";
+        exchangeGeneratedCode = "";
+        customGeneratedCode = "";
+        exchangeForm.reset();
+        customForm.reset();
+        shotHint.hidden = true;
+        exchangeResult.hidden = true;
+        customResult.hidden = true;
+        showGenError("");
+        switchGenType("exchange");
+        generateMask.classList.add("open");
+      }
+
+      function closeGenerate() {
+        generateMask.classList.remove("open");
+        showGenError("");
+      }
+
+      function switchGenType(type) {
+        activeGenType = type;
+        document.querySelectorAll(".gen-tab").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.genType === type);
+        });
+        document.querySelectorAll(".gen-panel").forEach((panel) => {
+          panel.classList.toggle("active", panel.dataset.genPanel === type);
+        });
+        showGenError("");
+      }
+
+      async function uploadScreenshot(file) {
+        const body = new FormData();
+        body.append("file", file);
+        const response = await fetch("/api/uploads", { method: "POST", body });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          const raw = data.message;
+          throw new Error(Array.isArray(raw) ? raw[0] : raw || "上传失败");
+        }
+        return data.url;
+      }
+
+      async function copyText(text) {
+        if (!text) return;
+        try {
+          await navigator.clipboard.writeText(text);
+          closeGenerate();
+          showMessage("已复制标识码", true);
+        } catch {
+          showGenError("复制失败，请手动复制");
+        }
+      }
+
       const entryError = new URLSearchParams(window.location.search)
         .get("error")
         ?.trim();
@@ -65,6 +241,136 @@
         showMessage(entryError);
         history.replaceState({}, "", "/page/");
       }
+
+      document
+        .getElementById("open-generate-btn")
+        .addEventListener("click", openGenerate);
+
+      document.querySelectorAll("[data-close-generate]").forEach((btn) => {
+        btn.addEventListener("click", closeGenerate);
+      });
+
+      generateMask.addEventListener("click", (event) => {
+        if (event.target === generateMask) closeGenerate();
+      });
+
+      document.getElementById("gen-tabs").addEventListener("click", (event) => {
+        const tab = event.target.closest("[data-gen-type]");
+        if (!tab) return;
+        switchGenType(tab.dataset.genType);
+      });
+
+      document
+        .getElementById("exchange-shot")
+        .addEventListener("change", async (event) => {
+          const file = event.target.files?.[0];
+          uploadedShotUrl = "";
+          if (!file) {
+            shotHint.hidden = true;
+            return;
+          }
+          shotHint.hidden = false;
+          shotHint.textContent = "上传中…";
+          try {
+            uploadedShotUrl = await uploadScreenshot(file);
+            shotHint.textContent = "截图已上传";
+            showGenError("");
+          } catch (error) {
+            event.target.value = "";
+            shotHint.textContent =
+              error instanceof Error ? error.message : "上传失败";
+          }
+        });
+
+      exchangeForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const submitBtn = document.getElementById("gen-exchange-btn");
+        const platform = exchangeForm.platform.value;
+        const platformId = exchangeForm.platformId.value.trim();
+        if (!platformId) {
+          showGenError("请输入平台 ID");
+          return;
+        }
+        if (!uploadedShotUrl) {
+          showGenError("请上传个人中心 ID 截图");
+          return;
+        }
+
+        const code = `${platform}${platformId}`;
+        submitBtn.disabled = true;
+        submitBtn.textContent = "生成中…";
+        showGenError("");
+
+        try {
+          const response = await fetch("/api/page-entry-codes", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              pageType: "exchange",
+              code,
+              screenshotUrl: uploadedShotUrl,
+            }),
+          });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) {
+            const raw = data.message;
+            throw new Error(Array.isArray(raw) ? raw[0] : raw || "生成失败");
+          }
+          exchangeGeneratedCode = data.code;
+          exchangeCodeEl.textContent = data.code;
+          exchangeResult.hidden = false;
+        } catch (error) {
+          showGenError(error instanceof Error ? error.message : "生成失败");
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "生成";
+        }
+      });
+
+      customForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const submitBtn = document.getElementById("gen-custom-btn");
+        const username = customForm.username.value.trim();
+        if (!username) {
+          showGenError("请输入用户名");
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "生成中…";
+        showGenError("");
+
+        try {
+          const response = await fetch("/api/page-entry-codes", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              pageType: "custom",
+              code: username,
+            }),
+          });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) {
+            const raw = data.message;
+            throw new Error(Array.isArray(raw) ? raw[0] : raw || "生成失败");
+          }
+          customGeneratedCode = data.code;
+          customCodeEl.textContent = data.code;
+          customResult.hidden = false;
+        } catch (error) {
+          showGenError(error instanceof Error ? error.message : "生成失败");
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "生成";
+        }
+      });
+
+      document
+        .getElementById("copy-exchange-btn")
+        .addEventListener("click", () => copyText(exchangeGeneratedCode));
+      document
+        .getElementById("copy-custom-btn")
+        .addEventListener("click", () => copyText(customGeneratedCode));
 
       form.addEventListener("submit", async (event) => {
         event.preventDefault();

@@ -1,55 +1,135 @@
-.custom-shell {
-  max-width: 960px;
-  margin: 0 auto;
+:root {
+  --ink: #12151a;
+  --fog: #d6dbe3;
+  --mist: #9aa3b2;
+  --copper: #1e9e82;
+  --copper-bright: #2ec9a4;
+  --line: rgba(214, 219, 227, 0.12);
+  --danger: #d96a5b;
+  --font-display: "Syne", sans-serif;
+  --font-body: "Manrope", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body.custom-body {
+  font-family: var(--font-body);
+  color: var(--fog);
+  background:
+    radial-gradient(ellipse 70% 50% at 0% 0%, rgba(30, 158, 130, 0.16), transparent 50%),
+    linear-gradient(160deg, #0e1116, #151a22 40%, #12161d);
+}
+
+a {
+  color: inherit;
+}
+
+.custom-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+}
+
+.custom-side {
+  border-right: 1px solid var(--line);
+  background: rgba(18, 21, 26, 0.88);
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.custom-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 1.2rem;
+  padding: 0 10px;
+}
+
+.custom-brand span {
+  color: var(--copper-bright);
+}
+
+.custom-nav {
+  display: grid;
+  gap: 6px;
+}
+
+.custom-nav button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--mist);
+  text-align: left;
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 12px 14px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.custom-nav button:hover {
+  color: var(--fog);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.custom-nav button.active {
+  color: var(--copper-bright);
+  background: rgba(30, 158, 130, 0.1);
+  border-left-color: var(--copper-bright);
+}
+
+.custom-side .back-link {
+  position: fixed;
+  left: 18px;
+  bottom: 20px;
+  z-index: 40;
+  margin: 0;
+  padding: 10px 14px;
+  color: var(--mist);
+  font-size: 0.88rem;
+  text-decoration: none;
+  border: 1px solid var(--line);
+  background: rgba(18, 21, 26, 0.92);
+  backdrop-filter: blur(8px);
+  width: fit-content;
+}
+
+.custom-side .back-link:hover {
+  color: var(--copper-bright);
+  border-color: var(--copper-bright);
 }
 
 .custom-main {
-  flex: 1;
-  padding: 36px 0 56px;
+  padding: 28px clamp(18px, 3vw, 36px) 88px;
+  min-width: 0;
 }
 
 .custom-header {
-  margin-bottom: 20px;
-  animation: rise 0.7s ease both;
-}
-
-.custom-header .eyebrow {
-  margin: 0 0 10px;
-  font-size: 0.78rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--copper-bright);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
 }
 
 .custom-header h1 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 3rem);
-  line-height: 1.1;
-}
-
-.custom-tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 22px;
-  animation: rise 0.75s ease 0.06s both;
-}
-
-.tab-btn {
-  appearance: none;
-  border: 1px solid var(--line);
-  background: rgba(28, 34, 43, 0.72);
-  color: var(--mist);
-  font: inherit;
-  padding: 10px 16px;
-  cursor: pointer;
-  position: relative;
-}
-
-.tab-btn.active {
-  color: var(--copper-bright);
-  border-color: rgba(46, 201, 164, 0.55);
-  background: rgba(30, 158, 130, 0.12);
+  font-size: clamp(1.5rem, 3vw, 2rem);
 }
 
 .cart-badge {
@@ -62,17 +142,17 @@
   padding: 0 5px;
   border-radius: 9px;
   background: var(--copper);
-  color: #1a120c;
+  color: #0c1a16;
   font-size: 0.72rem;
   font-weight: 700;
+  vertical-align: middle;
 }
 
-.tab-panel {
+.view {
   display: none;
-  animation: rise 0.7s ease both;
 }
 
-.tab-panel.active {
+.view.active {
   display: block;
 }
 
@@ -575,9 +655,24 @@
   color: #f0b0a8;
 }
 
-@media (max-width: 640px) {
-  .custom-tabs {
-    flex-wrap: wrap;
+@media (max-width: 860px) {
+  .custom-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .custom-side {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 16px;
+  }
+
+  .custom-nav {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .custom-side .back-link {
+    left: 18px;
+    bottom: 16px;
   }
 
   .product-card,

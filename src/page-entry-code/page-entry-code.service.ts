@@ -1,7 +1,12 @@
 /*
  * @Description: 网页进入码服务
  */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
@@ -32,18 +37,28 @@ export class PageEntryCodeService {
   }
 
   async create(dto: CreatePageEntryCodeDto) {
-    let code = generatePageCode(12);
-    for (let i = 0; i < 5; i += 1) {
-      const exists = await this.pageEntryCodeRepository.exists({
-        where: { code },
-      });
-      if (!exists) break;
-      code = generatePageCode(12);
+    const pageType = dto.pageType;
+    let code = dto.code?.trim() || '';
+    const screenshotUrl = dto.screenshotUrl?.trim() || '';
+
+    if (code) {
+      this.assertCustomCode(pageType, code, screenshotUrl);
+    } else {
+      code = await this.generateUniqueCode();
+    }
+
+    const exists = await this.pageEntryCodeRepository.exists({
+      where: { code },
+    });
+    if (exists) {
+      throw new ConflictException('该标识码已存在');
     }
 
     const entry = this.pageEntryCodeRepository.create({
-      pageType: dto.pageType,
+      pageType,
       code,
+      screenshotUrl:
+        pageType === PageType.Exchange ? screenshotUrl : '',
       isValid: true,
     });
 
@@ -82,6 +97,46 @@ export class PageEntryCodeService {
       pageType,
       pageTypeLabel: PAGE_TYPE_LABELS[pageType],
     };
+  }
+
+  private assertCustomCode(
+    pageType: PageType,
+    code: string,
+    screenshotUrl: string,
+  ) {
+    if (pageType === PageType.Exchange) {
+      if (!/^(xhs|dy).+/i.test(code)) {
+        throw new BadRequestException('互换标识码格式应为 xhs/dy + ID');
+      }
+      if (!screenshotUrl) {
+        throw new BadRequestException('请上传个人中心 ID 截图');
+      }
+      return;
+    }
+
+    if (pageType === PageType.Custom) {
+      if (!code) {
+        throw new BadRequestException('请输入用户名作为标识码');
+      }
+      if (/^(xhs|dy)/i.test(code)) {
+        throw new BadRequestException('定制标识码请使用用户名，勿使用互换前缀');
+      }
+      return;
+    }
+
+    // admin 等类型允许自定义码，但不强制截图
+  }
+
+  private async generateUniqueCode() {
+    let code = generatePageCode(12);
+    for (let i = 0; i < 5; i += 1) {
+      const exists = await this.pageEntryCodeRepository.exists({
+        where: { code },
+      });
+      if (!exists) return code;
+      code = generatePageCode(12);
+    }
+    return code;
   }
 
   private toResponse(entry: PageEntryCode) {

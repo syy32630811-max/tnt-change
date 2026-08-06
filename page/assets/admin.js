@@ -296,7 +296,7 @@ async function updateOrderStatus(orderId, status) {
 function renderPageCodes() {
   const body = document.getElementById("page-codes-body");
   if (!state.pageCodes.length) {
-    body.innerHTML = `<tr><td colspan="5"><div class="empty">暂无页面码，点击右上角新增</div></td></tr>`;
+    body.innerHTML = `<tr><td colspan="6"><div class="empty">暂无页面码，点击右上角新增</div></td></tr>`;
     return;
   }
 
@@ -306,6 +306,11 @@ function renderPageCodes() {
       <tr>
         <td><code>${escapeHtml(item.code)}</code></td>
         <td>${escapeHtml(item.pageTypeLabel || item.pageType)}</td>
+        <td>${
+          item.screenshotUrl
+            ? `<img class="thumb sm" src="${escapeHtml(item.screenshotUrl)}" alt="" />`
+            : "-"
+        }</td>
         <td><span class="badge ${item.isValid ? "valid" : "invalid"}">${item.isValid ? "有效" : "无效"}</span></td>
         <td>${formatDate(item.createdAt)}</td>
         <td>

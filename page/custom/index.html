@@ -10,33 +10,36 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Syne:wght@700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/page/assets/styles.css" />
     <link rel="stylesheet" href="/page/assets/custom.css" />
   </head>
-  <body>
-    <div class="shell custom-shell">
-      <div class="brand">Chan<span>ge</span></div>
-      <main class="custom-main">
-        <header class="custom-header">
-          <p class="eyebrow">Custom</p>
-          <h1>物料定制</h1>
-        </header>
-
-        <nav class="custom-tabs" id="custom-tabs">
-          <button type="button" class="tab-btn active" data-tab="products">商品列表</button>
-          <button type="button" class="tab-btn" data-tab="cart">
+  <body class="custom-body">
+    <div class="custom-layout">
+      <aside class="custom-side">
+        <div class="custom-brand">Chan<span>ge</span></div>
+        <nav class="custom-nav" id="custom-nav">
+          <button type="button" data-nav="products" class="active">商品列表</button>
+          <button type="button" data-nav="cart">
             购物车<span class="cart-badge" id="cart-badge" hidden>0</span>
           </button>
-          <button type="button" class="tab-btn" data-tab="orders">我的订单</button>
+          <button type="button" data-nav="orders">我的订单</button>
         </nav>
+        <a class="back-link" href="/page/">← 返回入口</a>
+      </aside>
 
-        <section class="tab-panel active" data-panel="products">
+      <main class="custom-main">
+        <section class="view active" data-view="products">
+          <div class="custom-header">
+            <h1>商品列表</h1>
+          </div>
           <div id="product-list" class="product-list">
             <div class="empty-tip">加载中…</div>
           </div>
         </section>
 
-        <section class="tab-panel" data-panel="cart">
+        <section class="view" data-view="cart">
+          <div class="custom-header">
+            <h1>购物车</h1>
+          </div>
           <div id="cart-list" class="cart-list">
             <div class="empty-tip">购物车为空</div>
           </div>
@@ -46,13 +49,14 @@
           </div>
         </section>
 
-        <section class="tab-panel" data-panel="orders">
+        <section class="view" data-view="orders">
+          <div class="custom-header">
+            <h1>我的订单</h1>
+          </div>
           <div id="order-list" class="order-list">
             <div class="empty-tip">加载中…</div>
           </div>
         </section>
-
-        <a class="back" href="/page/">← 返回入口</a>
       </main>
     </div>
 

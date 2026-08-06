@@ -92,20 +92,28 @@ body.admin-body {
 }
 
 .admin-side .back-link {
-  margin-top: auto;
+  position: fixed;
+  left: 18px;
+  bottom: 20px;
+  z-index: 40;
+  margin: 0;
   padding: 10px 14px;
   color: var(--mist);
   font-size: 0.88rem;
-  border-top: 1px solid var(--line);
-  padding-top: 18px;
+  text-decoration: none;
+  border: 1px solid var(--line);
+  background: rgba(18, 21, 26, 0.92);
+  backdrop-filter: blur(8px);
+  width: fit-content;
 }
 
 .admin-side .back-link:hover {
   color: var(--copper-bright);
+  border-color: var(--copper-bright);
 }
 
 .admin-main {
-  padding: 28px clamp(18px, 3vw, 36px) 40px;
+  padding: 28px clamp(18px, 3vw, 36px) 88px;
 }
 
 .admin-header {
@@ -461,7 +469,8 @@ table.data-table tr:last-child td {
   }
 
   .admin-side .back-link {
-    margin-top: 8px;
+    left: 18px;
+    bottom: 16px;
   }
 
   .spec-item {

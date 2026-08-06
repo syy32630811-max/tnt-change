@@ -22,6 +22,10 @@ export class PageEntryCode {
   @Column({ type: 'varchar', length: 128, unique: true })
   code: string;
 
+  /** 个人中心 ID 截图（互换生成时上传） */
+  @Column({ name: 'screenshot_url', type: 'varchar', length: 512, default: '' })
+  screenshotUrl: string;
+
   /** 是否有效 */
   @Column({ name: 'is_valid', type: 'boolean', default: true })
   isValid: boolean;

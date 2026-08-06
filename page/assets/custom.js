@@ -141,11 +141,11 @@ function closeModal() {
 
 function switchTab(tab) {
   activeTab = tab;
-  document.querySelectorAll(".tab-btn").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.tab === tab);
+  document.querySelectorAll(".custom-nav [data-nav]").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.nav === tab);
   });
-  document.querySelectorAll(".tab-panel").forEach((panel) => {
-    panel.classList.toggle("active", panel.dataset.panel === tab);
+  document.querySelectorAll(".view").forEach((panel) => {
+    panel.classList.toggle("active", panel.dataset.view === tab);
   });
 
   if (tab === "products") renderProducts();
@@ -570,9 +570,9 @@ document.addEventListener("change", (event) => {
 });
 
 document.addEventListener("click", (event) => {
-  const tabBtn = event.target.closest("[data-tab]");
-  if (tabBtn) {
-    switchTab(tabBtn.dataset.tab);
+  const tabBtn = event.target.closest("[data-nav]");
+  if (tabBtn && tabBtn.closest(".custom-nav")) {
+    switchTab(tabBtn.dataset.nav);
     return;
   }
 
